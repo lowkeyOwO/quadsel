@@ -23,71 +23,29 @@
 include 'db_connection.php';
 $conn = OpenCon();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['log_email']) && isset($_POST['log_password'])) {
-        $log_email = $_POST['log_email'];
-        $log_password = $_POST['log_password'];
-        if (trim($log_email) == "" or trim($log_password) == "") {
-            "Cannot be empty!";
-        } else {
-            $query = "SELECT * FROM `login` WHERE email=?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("s", $log_email);
-            $stmt->execute();
-            $stmt->store_result();
-            $stmt->bind_result($result_email, $result_password);
-            while ($stmt->fetch()) {
-                if (password_verifY($log_password, $result_password)) {
-                    $_SESSION["email"] = $result_email;
-                    header("Location: ./home");
-                }
-            }
-            $stmt->close();
-        }
+$request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+
+if ($request_method === 'POST') {
+    $log_email = filter_input(INPUT_POST, 'log_email', FILTER_VALIDATE_EMAIL);
+    $log_password = filter_input(INPUT_POST, 'log_password', FILTER_SANITIZE_STRING);
+
+    if ($log_email === false || $log_password === null) {
+        echo "Invalid input!";
     } else {
-        echo "Form fields not set.";
+        $query = "SELECT * FROM `login` WHERE email=?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $log_email);
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($result_email, $result_password);
+
+        while ($stmt->fetch()) {
+            if (password_verify($log_password, $result_password)) {
+                $_SESSION["email"] = $result_email;
+                header("Location: ./home");
+            }
+        }
+        $stmt->close();
     }
 }
 ?>
-
-
-<!-- <style>
-    .bg {
-        background-color: #000000;
-        background-image: radial-gradient(#d1001f 2px, transparent 2px), radial-gradient(#d1001f 2px, #000000 2px);
-        background-size: 80px 80px;
-        background-position: 0 0, 40px 40px;
-    }
-
-    .compl {
-        background-color: #d1001f;
-    }
-</style>
-
-
-<body class="hero is-fullheight bg">
-    <div class="hero-body">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-three-fifths">
-                    <form action='' method="post" class="box">
-                        <div class="field">
-                            <label class="label">Email</label>
-                            <div class="control">
-                                <input class="input" type="email" placeholder="e.g. alex@example.com">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Password</label>
-                            <div class="control">
-                                <input class="input" type="password" placeholder="********">
-                            </div>
-                        </div>
-                        <button class="button is-primary">Sign in</button>
-                        <a href="./forgot_password" class="ml-6">Forgot Password?</a>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</body> -->

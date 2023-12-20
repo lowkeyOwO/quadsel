@@ -83,20 +83,161 @@
                             <i class="fa-regular fa-user"></i>
                         </span>
                     </button>
-
                 </div>
             </div>
         </div>
-    </form>..
+        <?php
+        include '.../../../../db_connection.php';
+        $conn = OpenCon();
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if (isset($_POST['pending_btn'])) {
+                echo "<div class='container mt-6 mb-6'>";
+                $query = "SELECT * FROM `pending_employee_details`";
+                $stmt = $conn->prepare($query);
+                $stmt->execute();
+                $stmt->store_result();
+                $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
+                while ($stmt->fetch()) {
+                    $uniqueModalID = 'ModalID_' . $emp_id;
+                    $uniqueRejectModalID = 'RejectModalID_' . $emp_id;
+                    echo "
+                <div class='box pt-6'>
+                <div class='columns'>
+                    <div class='column is-2'>
+                        <figure class='image is-128x128'>
+                            <img src='$profile_photo_link' class='custom-rad'>
+                        </figure>
+                    </div>
+                    <div class='column is-4'>
+                        <p class='title is-4'>Name:</p>
+                        <p class='subtitle is-6 mb-6'>$emp_name</p>
+                        <p class='title is-4'>Phone:</p>
+                        <p class='subtitle is-6'>$phone_no</p>
+                    </div>
+                    <div class='column is-4'>
+                        <p class='title is-4'>Aadhar No:</p>
+                        <p class='subtitle is-6 mb-6'>$aadhar_no</p>
+                        <p class='title is-4'>PAN No:</p>
+                        <p class='subtitle is-6'>$pan_no</p>
+                    </div>
+                    <div class='column is-2 mt-6'>
+                        <button class='button is-info has-icons mr-3 js-modal-trigger' data-target='$uniqueModalID'
+                            type='button' name='view_profile_btn'>
+                            <span class='icon'>
+                                <i class='fa-solid fa-angles-right'></i>
+                            </span>
+                        </button>
+                        <button class='button is-primary has-icons mr-3' type='submit' name='approve_btn' value='$emp_id'>
+                            <span class='icon'>
+                                <i class='fa-solid fa-check'></i>
+                            </span>
+                        </button>
+                        <button class='button is-danger has-icons mr-3 js-modal-trigger' data-target='$uniqueRejectModalID'
+                        type='button' name='enter_reason_btn'>
+                            <span class='icon'>
+                                <i class='fa-solid fa-xmark'></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div id='$uniqueModalID' class='modal'>
+                    <div class='modal-background'></div>
+                    <div class='modal-content'>
+                        <div class='box'>
+                            <div class='columns'>
+                                <div class='column is-two-fifths'>
+                                    <p class='title is-4'>Name:</p>
+                                    <p class='subtitle is-6 mb-6'>$emp_name</p>
+                                    <p class='title is-4'>Address:</p>
+                                    <p class='subtitle is-6 mb-6'>$address</p>
+                                    <p class='title is-4'>Aadhar No:</p>
+                                    <p class='subtitle is-6 mb-6'>$aadhar_no</p>
+                                    <p class='title is-4'>Phone:</p>
+                                    <p class='subtitle is-6'>$phone_no</p>
+                                </div>
+                                <div class='column is-two-fifths'>
+                                    <p class='title is-4'>Date of birth:</p>
+                                    <p class='subtitle is-6 mb-6'>$date_of_birth</p>
+                                    <p class='title is-4'>Email:</p>
+                                    <p class='subtitle is-6 mb-6'>$email_id</p>
+                                    <p class='title is-4'>PAN No:</p>
+                                    <p class='subtitle is-6 mb-6'>$pan_no</p>
+                                </div>
+                                <div class='column is-one-fifths'>
+                                    <figure class='image is-4by5'>
+                                        <img src='$profile_photo_link' class='custom-rad'>
+                                    </figure>
+                                    <p class='title is-3 mt-6'>$emp_id</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class='modal-close is-large' aria-label='close' type='button'></button>
+                </div>
+                <div id='$uniqueRejectModalID' class='modal'>
+                    <div class='modal-background'></div>
+                    <div class='modal-content'>
+                        <div class='box'>
+                        <input type='text' name='reject_reason' placeholder='reason'>
+                           <button name='reject_btn' value='$emp_id'></button>
+                        </div>
+                    </div>
+                    <button class='modal-close is-large' aria-label='close' type='button'></button>
+                </div>
+                </div>";
+                }
+                echo "</div>";
+                $stmt->close();
+            } else if (isset($_POST['approve_btn'])) {
+                $clickedEmpID = $_POST['approve_btn'];
+                $query = "SELECT * FROM `pending_employee_details` WHERE emp_id=?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("s", $clickedEmpID);
+                $stmt->execute();
+                $stmt->store_result();
+                $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
 
-    <?php
-    include '.../../../../db_connection.php';
-    $conn = OpenCon();
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST['pending_btn'])) {
-            echo "irukuravanaye nee olunga vela vanga maatra";
-        } else {
-            if (isset($_POST['search_email'])) {
+                while ($stmt->fetch()) {
+                    $insertQuery = "INSERT INTO `employee_details` (emp_id, emp_name, date_of_birth, address, email_id, aadhar_no, pan_no, password, profile_photo_link, phone_number, date_of_joining) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $date_of_joining = date("Y-m-d H:i:s");
+                    $stmtInsert = $conn->prepare($insertQuery);
+                    $stmtInsert->bind_param("sssssssssss", $emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no, $date_of_joining);
+                    $stmtInsert->execute();
+
+                    $deleteQuery = "DELETE FROM `pending_employee_details` WHERE emp_id=?";
+                    $stmtDelete = $conn->prepare($deleteQuery);
+                    $stmtDelete->bind_param("s", $emp_id);
+                    $stmtDelete->execute();
+
+                    $stmtInsert->close();
+                    $stmtDelete->close();
+                }
+
+                $stmt->close();
+            } else if (isset($_POST['reject_btn'])) {
+                $clickedEmpID = $_POST['reject_btn'];
+                $query = "SELECT email_id FROM `pending_employee_details` WHERE emp_id=?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("s", $clickedEmpID);
+                $stmt->execute();
+                $stmt->store_result();
+                $stmt->bind_result($email_id);
+                while ($stmt->fetch()) {
+                    $insertQuery = "INSERT INTO `rejected_employee_details` (email_id,reason) 
+                                    VALUES (?,?)";
+                    $stmtInsert = $conn->prepare($insertQuery);
+                    $stmtInsert->bind_param("ss", $email_id, $reason);
+                    $stmtInsert->execute();
+                    $deleteQuery = "DELETE FROM `pending_employee_details` WHERE emp_id=?";
+                    $stmtDelete = $conn->prepare($deleteQuery);
+                    $stmtDelete->bind_param("s", $emp_id);
+                    $stmtDelete->execute();
+                    $stmtInsert->close();
+                    $stmtDelete->close();
+                }
+                $stmt->close();
+            } else if (isset($_POST['search_email'])) {
                 $search_email = $_POST['search_email'];
                 if (trim($search_email) == "") {
                     echo "Email Cannot be empty!";
@@ -119,7 +260,7 @@
                                 </tr>
                              </thead>
                              <tbody>";
-                        while ($stmt->fetch()) {     
+                        while ($stmt->fetch()) {
                             echo "      
                             <tr>                 
                              <td>$date</td>
@@ -132,7 +273,6 @@
                         </table> </div>";
                         $stmt->close();
                     } else if (isset($_POST['profile_btn'])) {
-
                         $query = "SELECT * FROM `employee_details` WHERE email_id=?";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("s", $search_email);
@@ -151,6 +291,7 @@
                                 <p class='subtitle is-6 mb-6'>$aadhar_no</p>
                                 <p class='title is-4'>Phone:</p>
                                 <p class='subtitle is-6'>$phone_no</p>
+                                <p class='title is-1 mt-6'>$emp_id</p>
                             </div>
                             <div class='column is-two-fifths'>
                                 <p class='title is-4'>Date of birth:</p>
@@ -169,13 +310,13 @@
                                 <div class='columns'>
                                     <div class='column is-half'></div>
                                     <div class='column is-one-fourth'><button class='button is-primary has-icons mt-6 mr-3'
-                                            type='submit' name='attendance_btn'>
+                                            type='submit' name='edit_profile_btn'>
                                             <span class='icon'>
                                                 <i class='fa-regular fa-edit'></i>
                                             </span>
                                         </button></div>
                                     <div class='column is-one-fourth'><button class='button is-danger has-icons mt-6' type='submit'
-                                            name='profile_btn'>
+                                            name='delete_profile_btn'>
                                             <span class='icon'>
                                                 <i class='fa-solid fa-trash'></i>
                                             </span>
@@ -190,10 +331,10 @@
                 }
             }
         }
-
-    }
-    ?>
+        ?>
+    </form>
     <script>
+        // Responsive Navbar
         document.addEventListener('DOMContentLoaded', () => {
             const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
             $navbarBurgers.forEach(el => {
@@ -205,7 +346,55 @@
                 });
             });
 
-        });</script>
+        });
+
+        // Modal Functionalities
+
+        document.addEventListener('DOMContentLoaded', () => {
+            function openModal(event) {
+                event.preventDefault();
+                const modalId = event.currentTarget.getAttribute('data-target');
+                const modal = document.getElementById(modalId);
+                openModal(modal);
+            }
+            function openModal($el) {
+                $el.classList.add('is-active');
+            }
+
+            function closeModal($el) {
+                $el.classList.remove('is-active');
+            }
+
+            function closeAllModals() {
+                (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                    closeModal($modal);
+                });
+            }
+
+            (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+                const modal = $trigger.dataset.target;
+                const $target = document.getElementById(modal);
+                console.log($target);
+                $trigger.addEventListener('click', () => {
+                    openModal($target);
+                });
+            });
+
+            (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+                const $target = $close.closest('.modal');
+
+                $close.addEventListener('click', () => {
+                    closeModal($target);
+                });
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.code === 'Escape') {
+                    closeAllModals();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

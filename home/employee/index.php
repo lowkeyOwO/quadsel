@@ -65,8 +65,8 @@
                     </button></div>
                 <div class="column is-three-fifths">
                     <div class="control has-icons-left">
-                        <input class="input is-primary" type="email" name="search_email"
-                            placeholder="Email of employee"></input>
+                        <input class="input is-primary" type="email" name="search_email" placeholder="Email of employee"
+                            value="<?php echo isset($_POST['search_email']) ? htmlspecialchars($_POST['search_email']) : ''; ?>"></input>
                         <span class="icon is-left">
                             <i class="fas fa-search"></i>
                         </span>
@@ -97,96 +97,104 @@
                 $stmt->execute();
                 $stmt->store_result();
                 $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
-                while ($stmt->fetch()) {
-                    $uniqueModalID = 'ModalID_' . $emp_id;
-                    $uniqueRejectModalID = 'RejectModalID_' . $emp_id;
-                    echo "
-                <div class='box pt-6'>
-                <div class='columns'>
-                    <div class='column is-2'>
-                        <figure class='image is-128x128'>
-                            <img src='$profile_photo_link' class='custom-rad'>
-                        </figure>
+                $numRows = $stmt->num_rows;
+                if ($numRows == 0) {
+                    echo "<div class='container has-text-centered pt-6'>
+                    <h1 class='title is-1'>No Pending Approvals!</h1>
+                    </div>";
+                } else {
+                    while ($stmt->fetch()) {
+                        $uniqueModalID = 'ModalID_' . $emp_id;
+                        $uniqueRejectModalID = 'RejectModalID_' . $emp_id;
+                        echo "
+                    <div class='box pt-6'>
+                    <div class='columns'>
+                        <div class='column is-2'>
+                            <figure class='image is-128x128'>
+                                <img src='$profile_photo_link' class='custom-rad'>
+                            </figure>
+                        </div>
+                        <div class='column is-4'>
+                            <p class='title is-4'>Name:</p>
+                            <p class='subtitle is-6 mb-6'>$emp_name</p>
+                            <p class='title is-4'>Phone:</p>
+                            <p class='subtitle is-6'>$phone_no</p>
+                        </div>
+                        <div class='column is-4'>
+                            <p class='title is-4'>Aadhar No:</p>
+                            <p class='subtitle is-6 mb-6'>$aadhar_no</p>
+                            <p class='title is-4'>PAN No:</p>
+                            <p class='subtitle is-6'>$pan_no</p>
+                        </div>
+                        <div class='column is-2 mt-6'>
+                            <button class='button is-info has-icons mr-3 js-modal-trigger' data-target='$uniqueModalID'
+                                type='button' name='view_profile_btn'>
+                                <span class='icon'>
+                                    <i class='fa-solid fa-angles-right'></i>
+                                </span>
+                            </button>
+                            <button class='button is-primary has-icons mr-3' type='submit' name='approve_btn' value='$emp_id'>
+                                <span class='icon'>
+                                    <i class='fa-solid fa-check'></i>
+                                </span>
+                            </button>
+                            <button class='button is-danger has-icons mr-3 js-modal-trigger' data-target='$uniqueRejectModalID'
+                            type='button' name='enter_reason_btn'>
+                                <span class='icon'>
+                                    <i class='fa-solid fa-xmark'></i>
+                                </span>
+                            </button>
+                        </div>
                     </div>
-                    <div class='column is-4'>
-                        <p class='title is-4'>Name:</p>
-                        <p class='subtitle is-6 mb-6'>$emp_name</p>
-                        <p class='title is-4'>Phone:</p>
-                        <p class='subtitle is-6'>$phone_no</p>
-                    </div>
-                    <div class='column is-4'>
-                        <p class='title is-4'>Aadhar No:</p>
-                        <p class='subtitle is-6 mb-6'>$aadhar_no</p>
-                        <p class='title is-4'>PAN No:</p>
-                        <p class='subtitle is-6'>$pan_no</p>
-                    </div>
-                    <div class='column is-2 mt-6'>
-                        <button class='button is-info has-icons mr-3 js-modal-trigger' data-target='$uniqueModalID'
-                            type='button' name='view_profile_btn'>
-                            <span class='icon'>
-                                <i class='fa-solid fa-angles-right'></i>
-                            </span>
-                        </button>
-                        <button class='button is-primary has-icons mr-3' type='submit' name='approve_btn' value='$emp_id'>
-                            <span class='icon'>
-                                <i class='fa-solid fa-check'></i>
-                            </span>
-                        </button>
-                        <button class='button is-danger has-icons mr-3 js-modal-trigger' data-target='$uniqueRejectModalID'
-                        type='button' name='enter_reason_btn'>
-                            <span class='icon'>
-                                <i class='fa-solid fa-xmark'></i>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                <div id='$uniqueModalID' class='modal'>
-                    <div class='modal-background'></div>
-                    <div class='modal-content'>
-                        <div class='box'>
-                            <div class='columns'>
-                                <div class='column is-two-fifths'>
-                                    <p class='title is-4'>Name:</p>
-                                    <p class='subtitle is-6 mb-6'>$emp_name</p>
-                                    <p class='title is-4'>Address:</p>
-                                    <p class='subtitle is-6 mb-6'>$address</p>
-                                    <p class='title is-4'>Aadhar No:</p>
-                                    <p class='subtitle is-6 mb-6'>$aadhar_no</p>
-                                    <p class='title is-4'>Phone:</p>
-                                    <p class='subtitle is-6'>$phone_no</p>
-                                </div>
-                                <div class='column is-two-fifths'>
-                                    <p class='title is-4'>Date of birth:</p>
-                                    <p class='subtitle is-6 mb-6'>$date_of_birth</p>
-                                    <p class='title is-4'>Email:</p>
-                                    <p class='subtitle is-6 mb-6'>$email_id</p>
-                                    <p class='title is-4'>PAN No:</p>
-                                    <p class='subtitle is-6 mb-6'>$pan_no</p>
-                                </div>
-                                <div class='column is-one-fifths'>
-                                    <figure class='image is-4by5'>
-                                        <img src='$profile_photo_link' class='custom-rad'>
-                                    </figure>
-                                    <p class='title is-3 mt-6'>$emp_id</p>
+                    <div id='$uniqueModalID' class='modal'>
+                        <div class='modal-background'></div>
+                        <div class='modal-content'>
+                            <div class='box'>
+                                <div class='columns'>
+                                    <div class='column is-two-fifths'>
+                                        <p class='title is-4'>Name:</p>
+                                        <p class='subtitle is-6 mb-6'>$emp_name</p>
+                                        <p class='title is-4'>Address:</p>
+                                        <p class='subtitle is-6 mb-6'>$address</p>
+                                        <p class='title is-4'>Aadhar No:</p>
+                                        <p class='subtitle is-6 mb-6'>$aadhar_no</p>
+                                        <p class='title is-4'>Phone:</p>
+                                        <p class='subtitle is-6'>$phone_no</p>
+                                    </div>
+                                    <div class='column is-two-fifths'>
+                                        <p class='title is-4'>Date of birth:</p>
+                                        <p class='subtitle is-6 mb-6'>$date_of_birth</p>
+                                        <p class='title is-4'>Email:</p>
+                                        <p class='subtitle is-6 mb-6'>$email_id</p>
+                                        <p class='title is-4'>PAN No:</p>
+                                        <p class='subtitle is-6 mb-6'>$pan_no</p>
+                                    </div>
+                                    <div class='column is-one-fifths'>
+                                        <figure class='image is-4by5'>
+                                            <img src='$profile_photo_link' class='custom-rad'>
+                                        </figure>
+                                        <p class='title is-3 mt-6'>$emp_id</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <button class='modal-close is-large' aria-label='close' type='button'></button>
                     </div>
-                    <button class='modal-close is-large' aria-label='close' type='button'></button>
-                </div>
-                <div id='$uniqueRejectModalID' class='modal'>
-                    <div class='modal-background'></div>
-                    <div class='modal-content'>
-                        <div class='box'>
-                        <input type='text' name='reject_reason' placeholder='reason'>
-                           <button name='reject_btn' value='$emp_id'></button>
+                    <div id='$uniqueRejectModalID' class='modal'>
+                        <div class='modal-background'></div>
+                        <div class='modal-content'>
+                            <div class='box is-flex'>
+                            <input type='text' class='input is-primary' name='reject_reason' placeholder='Reason'>
+                               <button name='reject_btn' class='button is-danger ml-3' type='submit' value='$emp_id'>Reject</button>
+                            </div>
                         </div>
+                        <button class='modal-close is-large' aria-label='close' type='button'></button>
                     </div>
-                    <button class='modal-close is-large' aria-label='close' type='button'></button>
-                </div>
-                </div>";
+                    </div>";
+                    }
+                    echo "</div>";
                 }
-                echo "</div>";
+
                 $stmt->close();
             } else if (isset($_POST['approve_btn'])) {
                 $clickedEmpID = $_POST['approve_btn'];
@@ -216,6 +224,8 @@
 
                 $stmt->close();
             } else if (isset($_POST['reject_btn'])) {
+                $reason = $_POST['reject_reason'];
+                echo "<h1>REASON: $reason</h1>";
                 $clickedEmpID = $_POST['reject_btn'];
                 $query = "SELECT email_id FROM `pending_employee_details` WHERE emp_id=?";
                 $stmt = $conn->prepare($query);
@@ -231,46 +241,93 @@
                     $stmtInsert->execute();
                     $deleteQuery = "DELETE FROM `pending_employee_details` WHERE emp_id=?";
                     $stmtDelete = $conn->prepare($deleteQuery);
-                    $stmtDelete->bind_param("s", $emp_id);
+                    $stmtDelete->bind_param("s", $clickedEmpID);
                     $stmtDelete->execute();
                     $stmtInsert->close();
                     $stmtDelete->close();
                 }
                 $stmt->close();
+            } else if (isset($_POST["edit_profile_btn"])) {
+              // If profile needs to be edited
+            } else if (isset($_POST["delete_profile_btn"])) {
+              // If profile needs to be deleted
             } else if (isset($_POST['search_email'])) {
                 $search_email = $_POST['search_email'];
                 if (trim($search_email) == "") {
-                    echo "Email Cannot be empty!";
+                    echo "<div class='container has-text-centered pt-6'>
+                    <h1 class='title is-1 has-text-danger'>Email cannot be empty!</h1>
+                    </div>";
                 } else {
                     if (isset($_POST['attendance_btn'])) {
-                        $query = "SELECT * FROM `employee_attendance` WHERE email_id=?";
+                        $dateText = date('F') . ' ' . date('Y');
+                        $month = date('Y-m');
+                        if (isset($_POST["selectedMonth"])) {
+                            $month = $_POST["selectedMonth"];
+                        }
+                        $currentMonth = date('Y-m');
+                        echo "<div class='container has-text-centered pt-6'>
+                                <div class='columns'>
+                                    <div class='column is-half has-text-centered'>
+                                    <h1 class='title is-3 has-text-info'>$month</h1>
+                                    </div>
+                                    <div class='column'><input type='month' value='$month' name='selectedMonth' min='2022-01' max='$currentMonth'/>
+                                    </div>
+                            </div>";
+
+                        $query = "SELECT * FROM `employee_attendance` WHERE email_id=? AND DATE_FORMAT(date, '%Y-%m') = ?;";
                         $stmt = $conn->prepare($query);
-                        $stmt->bind_param("s", $search_email);
+                        $stmt->bind_param("ss", $search_email, $month);
                         $stmt->execute();
                         $stmt->store_result();
                         $stmt->bind_result($emp_id, $date, $check_in_time, $check_out_time, $email_id);
-                        echo "
-                        <div class='container mt-6'>
-                            <table class='table is-bordered is-striped'>
-                            <thead class='has-background-primary'>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Check-In</th>
-                                    <th>Check-Out</th>
-                                </tr>
-                             </thead>
-                             <tbody>";
-                        while ($stmt->fetch()) {
-                            echo "      
-                            <tr>                 
-                             <td>$date</td>
-                             <td>$check_in_time</td>
-                             <td>$check_out_time</td>
-                             </tr>
+                        $rowCount = 0;
+                        if ($stmt->num_rows > 0) {
+                            echo "<div class='container mt-6'>
+                            <div class='columns'>
                             ";
+                            while ($stmt->fetch()) {
+                                if ($rowCount == 0) {
+                                    echo "
+                                    <div class='column is-one-third'>
+                                    <table class='table is-bordered is-striped'>
+                                    <thead class='has-background-primary'>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Check-In</th>
+                                            <th>Check-Out</th>
+                                        </tr>
+                                     </thead>
+                                     <tbody>";
+                                } else if ($rowCount == 10 || $rowCount == 20) {
+                                    echo "
+                                    </tbody></table></div>
+                                    <div class='column is-one-third'>
+                                    <table class='table is-bordered is-striped'>
+                                    <thead class='has-background-primary'>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Check-In</th>
+                                            <th>Check-Out</th>
+                                        </tr>
+                                     </thead>
+                                     <tbody>";
+                                }
+                                echo "      
+                                <tr>                 
+                                 <td>$date</td>
+                                 <td>$check_in_time</td>
+                                 <td>$check_out_time</td>
+                                 </tr>
+                                ";
+                                $rowCount += 1;
+                            }
+                            echo "</div></div>";
+                        } else {
+                            echo "<div class='container has-text-centered pt-6'>
+                            <h1 class='title is-1 has-text-danger'>Attendance for $dateText does not exist!</h1>
+                            </div>";
                         }
-                        echo "</tbody>
-                        </table> </div>";
+
                         $stmt->close();
                     } else if (isset($_POST['profile_btn'])) {
                         $query = "SELECT * FROM `employee_details` WHERE email_id=?";

@@ -8,7 +8,7 @@ function view_employee_profile($search_email)
     $stmt->bind_param("s", $search_email);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no, $date_of_joining);
+    $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $profile_photo_link, $phone_no, $date_of_joining);
     if ($stmt->num_rows > 0) {
         while ($stmt->fetch()) {
             $uniqueEditModalID = "editModal_" . $emp_id;
@@ -62,29 +62,27 @@ function view_employee_profile($search_email)
                 <div class='modal-content'>
                     <div class='box'>
                         <div class='columns'>
-                            <div class='column is-two-fifths'>
-                                <p class='title is-4'>Name:</p>
-                                <p class='subtitle is-6 mb-6'>$emp_name</p>
-                                <p class='title is-4'>Address:</p>
-                                <p class='subtitle is-6 mb-6'>$address</p>
-                                <p class='title is-4'>Aadhar No:</p>
-                                <p class='subtitle is-6 mb-6'>$aadhar_no</p>
-                                <p class='title is-4'>Phone:</p>
-                                <p class='subtitle is-6'>$phone_no</p>
+                            <div class='column is-half'>
+                            <input type='text' class='input is-primary mb-3' name='edit_emp_name' placeholder='Name' value='$emp_name'>
+                            <input type='text' class='input is-primary mb-3' name='edit_emp_address' placeholder='Address' value='$address'>
+                            <input type='number' class='input is-primary mb-3' name='edit_emp_aadhar' placeholder='Aadhar No' value='$aadhar_no'
+                            min='100000000000' max='999999999999'
+                            >
+                            <input type='number' class='input is-primary mb-3' name='edit_emp_phone' placeholder='Phone No' value='$phone_no'
+                            min='1000000000' max='9999999999'
+                            >
                             </div>
-                            <div class='column is-two-fifths'>
-                                <p class='title is-4'>Date of birth:</p>
-                                <p class='subtitle is-6 mb-6'>$date_of_birth</p>
-                                <p class='title is-4'>Email:</p>
-                                <p class='subtitle is-6 mb-6'>$email_id</p>
-                                <p class='title is-4'>PAN No:</p>
-                                <p class='subtitle is-6 mb-6'>$pan_no</p>
+                            <div class='column'>
+                            <input type='date' class='input is-primary mb-3' name='edit_emp_bday' placeholder='Date of Birth' value='$date_of_birth'>
+                            <input type='email' class='input is-primary mb-3' name='edit_emp_email' placeholder='Email ID' value='$email_id'>
+                            <input type='text' class='input is-primary mb-3' name='edit_emp_pan' placeholder='PAN No' value='$pan_no'>
+                            <input type='text' class='input is-primary mb-3' name='edit_emp_pic' placeholder='Profile Pic URL' value='$profile_photo_link'>
                             </div>
-                            <div class='column is-one-fifths'>
-                                <figure class='image is-4by5'>
-                                    <img src='$profile_photo_link' class='custom-rad'>
-                                </figure>
-                            </div>
+                        </div>
+                        <div class='columns'>
+                            <div class='column is-8'><input type='password' class='input is-primary' name='edit_admin_password' placeholder='Enter Admin Password to Confirm'></div>
+                            <div class='column is-4'>                           
+                            <button name='edit_profile_btn' class='button is-primary ml-6' type='submit' value='$emp_id'>Edit</button></div>
                         </div>
                     </div>
                 </div>
@@ -95,7 +93,7 @@ function view_employee_profile($search_email)
             <div class='modal-content'>
                 <div class='box is-flex'>
                 <p class='subtitle-6 has-text-danger'>Note: this action cannot be undone!</p>
-                <input type='password' class='input is-primary' name='admin_password' placeholder='Enter Admin Password to Confirm'>
+                <input type='password' class='input is-primary' name='delete_admin_password' placeholder='Enter Admin Password to Confirm'>
                    <button name='delete_profile_btn' class='button is-danger ml-3' type='submit' value='$emp_id'>Delete</button>
                 </div>
     

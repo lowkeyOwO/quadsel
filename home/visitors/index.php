@@ -64,7 +64,7 @@
                 <h1 class='title is-3 has-text-info'>$formattedDate</h1>
             </div>
             <div class='column'>
-                <input type='date' value='$date' name='selectedDate' min='2022-01-01' max='$currentDate'
+                <input type='date' class='input is-primary' value='$date' name='selectedDate' min='2022-01-01' max='$currentDate'
                     onchange='submitForm()' />
                     <button class='button is-primary is-hidden has-icons ml-6' type='submit' name='visitors_btn' id='visitors_btn'>
                 </button>

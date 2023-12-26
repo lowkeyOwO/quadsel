@@ -22,8 +22,8 @@ function view_visitors_details($date)
         $Profile_photo_link,
         $Type);
     $rowCount = $stmt->num_rows;
-        $dateTime = DateTime::createFromFormat('Y-m-d', $date);
-        $formattedDate = $dateTime->format('d F Y');
+    $dateTime = DateTime::createFromFormat('Y-m-d', $date);
+    $formattedDate = $dateTime->format('d F Y');
     if ($rowCount > 0) {
         echo "<div class='container mt-6 mb-6'>
         <div class='columns'>
@@ -93,6 +93,7 @@ function view_visitors_details($date)
                     <h1 class='title is-1 has-text-danger'>No visitors on $formattedDate!</h1>
                     </div>";
     }
+    CloseCon($conn);
 
 }
 

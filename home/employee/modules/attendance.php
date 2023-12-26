@@ -17,7 +17,7 @@ function view_employee_attendance($search_email)
                 <h1 class='title is-3 has-text-info'>$formattedMonth</h1>
                 </div>
                 <div class='column'>
-                        <input type='month' value='$month' name='selectedMonth' min='2022-01' max='$currentMonth' onchange='submitForm()'/>
+                        <input type='month' class='input is-primary' value='$month' name='selectedMonth' min='2022-01' max='$currentMonth' onchange='submitForm()'/>
                 </div>
                 </div>
         </div>";
@@ -72,7 +72,7 @@ function view_employee_attendance($search_email)
         echo "</div></div>";
     } else {
         echo "<div class='container has-text-centered pt-6'>
-        <h1 class='title is-1 has-text-danger'>Attendance for $formattedMonth or User does not exist!</h1>
+        <h1 class='title is-1 has-text-danger'>Attendance for $formattedMonth or user does not exist!</h1>
         </div>";
     }
     $stmt->close();

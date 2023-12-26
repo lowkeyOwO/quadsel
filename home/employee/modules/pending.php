@@ -1,4 +1,26 @@
 <?php
+function generateID($type)
+{
+
+    if ($type == "employee") {
+        $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBEM%'";
+        $result = mysqli_query($GLOBALS['con'], $sql);
+        $row = mysqli_fetch_array($result);
+        return ($row["count(*)"] < 9 ? "BBEM0" . ($row["count(*)"] + 1) : "BBEM" . $row["count(*)"]);
+    }
+    else if ($type == "admin") {
+        $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBAD%'";
+        $result = mysqli_query($GLOBALS['con'], $sql);
+        $row = mysqli_fetch_array($result);
+        return ($row["count(*)"] < 9 ? "BBAD0" . ($row["count(*)"] + 1) : "BBAD" . $row["count(*)"]);
+    }
+    else{
+            $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBIN%'";
+            $result = mysqli_query($GLOBALS['con'], $sql);
+            $row = mysqli_fetch_array($result);
+            return ($row["count(*)"] < 9 ? "BBIN0" . ($row["count(*)"] + 1) : "BBIN" . $row["count(*)"]);
+    }
+}
 
 function pending_approvals()
 {

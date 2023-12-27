@@ -48,27 +48,108 @@
       </div>
     </div>
   </nav>
-  <div style="width: 800px; height: 400px;"><canvas id="acquisitions"></canvas></div>
+
+  <div class="container p-6">
+    <h1 class="title is-1 has-text-centered">Average Check In Time & Check Out Time
+    </h1>
+    <div class="container is-flex is-centered is-justify-content-center mt-6">
+      <table class="table is-bordered is-striped">
+        <thead class='has-background-primary'>
+          <tr>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          include_once('./charts/checkinout.php');
+          $check_data = getCheckInOutData();
+          $check_in_time = "--:--:--";
+          $check_out_time = "--:--:--";
+          foreach ($check_data as $key => $value) {
+            $check_in_time = date('H:i:s', strtotime($value["avg_check_in"]));
+            $check_out_time = date('H:i:s', strtotime($value["avg_check_out"]));
+          }
+          ?>
+          <tr>
+            <td>
+              <?php echo $check_in_time; ?>
+            </td>
+            <td>
+              <?php echo $check_out_time; ?>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="container is-flex is-centered is-justify-content-center has-text-centered  mt-6">
+
+      <form action="./holidays/index.php"method="post" class="container has-text-centered"
+        enctype="multipart/form-data">
+        <input type="file" class="input is-info" accept=".xlsx,.xls" name="holiday_data" />
+        <button type="submit" class="button is-primary mt-6" name="holiday_submit">Submit</button>
+      </form>
+    </div>
+    <div class="container p-6">
+      <h1 class="title is-1 has-text-centered">Employee attendance for
+        <?php
+        $currentYear = date('Y');
+        $currentMonthF = date('F');
+        $formattedDate = $currentMonthF . ' ' . $currentYear;
+        echo $formattedDate; ?>
+      </h1>
+      <canvas id="acquisitions"></canvas>
+    </div>
+  </div>
+  <?php
+  include_once('./charts/attendance.php');
+  $analytics_data = getAttendanceData();
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $submit_btn = filter_input(INPUT_POST, 'holiday_submit', FILTER_SANITIZE_STRING);
+    if (isset($submit_btn)) {
+      $holiday_data = filter_input(INPUT_POST, 'holiday_data', FILTER_SANITIZE_STRING);
+      if (isset($holiday_data)) {
+        header("Location: ./holidays");
+      } else {
+        echo "File input not found or upload error.";
+      }
+    }
+  }
+  ?>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      let date = [], emp_count = [], abs_count = [];
+      try {
+        const TOTAL_EMPLOYEE_COUNT = 10;
+        const data = <?php echo json_encode($analytics_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
+        const avg_data = <?php echo json_encode($check_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
+        console.log('JSON Data:', avg_data);
+        date = Object.keys(data);
+        emp_count = Object.values(data);
+        emp_count.forEach(count => abs_count.push(TOTAL_EMPLOYEE_COUNT - count));
+      } catch (error) {
+        console.error('Error parsing or processing JSON data:', error);
+      }
       new Chart(document.getElementById('acquisitions'), {
         type: 'bar',
         data: {
           datasets: [{
-            label: 'Bar Dataset',
-            data: // Array of count(attendees),
-            order: 2
+            label: 'Present Count',
+            data: emp_count,
+            order: 2,
+            borderColor: '#36A2EB',
+            backgroundColor: '#9BD0F5',
           }, {
-            label: 'Line Dataset',
-            data: // Array of count(absentees),
+            label: 'Absent Count',
+            data: abs_count,
             type: 'line',
-            order: 1
+            order: 1,
+            borderColor: '#FF6384',
+            backgroundColor: '#FFB1C1',
           }],
-          labels: // Array of Dates
+          labels: date
         },
       });
-
-
       const $navbarBurgers = Array.from(document.querySelectorAll('.navbar-burger'));
       $navbarBurgers.forEach(el => {
         el.addEventListener('click', () => {

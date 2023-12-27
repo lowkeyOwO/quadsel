@@ -48,4 +48,6 @@ if ($request_method === 'POST') {
         $stmt->close();
     }
 }
+CloseCon($conn);
+
 ?>

@@ -5,7 +5,7 @@ function getAttendanceData()
     $conn = OpenCon();
     $currentMonth = date('m');
     $currentYear = date('Y');
-    $query = "SELECT date, COUNT(*) FROM `employee_attendance` WHERE MONTH(date) = ? AND YEAR(date) = ?";
+    $query = "SELECT date, COUNT(*) FROM `employee_attendance` WHERE MONTH(date) = ? AND YEAR(date) = ? GROUP BY DATE";
     $emp_count_stmt = $conn->prepare($query);
     $emp_count_stmt->bind_param('ii', $currentMonth, $currentYear);
     $emp_count_stmt->execute();

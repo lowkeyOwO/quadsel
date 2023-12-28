@@ -1,27 +1,4 @@
 <?php
-function generateID($type)
-{
-
-    if ($type == "employee") {
-        $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBEM%'";
-        $result = mysqli_query($GLOBALS['con'], $sql);
-        $row = mysqli_fetch_array($result);
-        return ($row["count(*)"] < 9 ? "BBEM0" . ($row["count(*)"] + 1) : "BBEM" . $row["count(*)"]);
-    }
-    else if ($type == "admin") {
-        $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBAD%'";
-        $result = mysqli_query($GLOBALS['con'], $sql);
-        $row = mysqli_fetch_array($result);
-        return ($row["count(*)"] < 9 ? "BBAD0" . ($row["count(*)"] + 1) : "BBAD" . $row["count(*)"]);
-    }
-    else{
-            $sql = "SELECT count(*) FROM employee WHERE emp_id like 'BBIN%'";
-            $result = mysqli_query($GLOBALS['con'], $sql);
-            $row = mysqli_fetch_array($result);
-            return ($row["count(*)"] < 9 ? "BBIN0" . ($row["count(*)"] + 1) : "BBIN" . $row["count(*)"]);
-    }
-}
-
 function pending_approvals()
 {
     include '.../../../../../db_connection.php';
@@ -31,7 +8,7 @@ function pending_approvals()
     $stmt = $conn->prepare($query);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($emp_id, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
+    $stmt->bind_result($type, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
     $numRows = $stmt->num_rows;
     if ($numRows == 0) {
         echo "<div class='container has-text-centered pt-6'>
@@ -39,8 +16,8 @@ function pending_approvals()
         </div>";
     } else {
         while ($stmt->fetch()) {
-            $uniqueModalID = 'ModalID_' . $emp_id;
-            $uniqueRejectModalID = 'RejectModalID_' . $emp_id;
+            $uniqueModalID = 'ModalID_' . $email_id;
+            $uniqueRejectModalID = 'RejectModalID_' . $email_id;
             echo "
         <div class='box pt-6'>
         <div class='columns'>
@@ -68,7 +45,7 @@ function pending_approvals()
                         <i class='fa-solid fa-angles-right'></i>
                     </span>
                 </button>
-                <button class='button is-primary has-icons mr-3' type='submit' name='approve_btn' value='$emp_id'>
+                <button class='button is-primary has-icons mr-3' type='submit' name='approve_btn' value='$email_id'>
                     <span class='icon'>
                         <i class='fa-solid fa-check'></i>
                     </span>
@@ -108,7 +85,7 @@ function pending_approvals()
                             <figure class='image is-4by5'>
                                 <img src='$profile_photo_link' class='custom-rad'>
                             </figure>
-                            <p class='title is-3 mt-6'>$emp_id</p>
+                            <p class='title is-3 mt-6'>$email_id</p>
                         </div>
                     </div>
                 </div>
@@ -120,7 +97,7 @@ function pending_approvals()
             <div class='modal-content'>
                 <div class='box is-flex'>
                 <input type='text' class='input is-primary' name='reject_reason' placeholder='Reason'>
-                   <button name='reject_btn' class='button is-danger ml-3' type='submit' value='$emp_id'>Reject</button>
+                   <button name='reject_btn' class='button is-danger ml-3' type='submit' value='$email_id'>Reject</button>
                 </div>
             </div>
             <button class='modal-close is-large' aria-label='close' type='button'></button>

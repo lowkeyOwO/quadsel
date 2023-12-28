@@ -1,3 +1,8 @@
+<?php
+// if (!isset($_SESSION["emp_id"])) {
+//   header("Location: ../login");
+// }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,8 +18,18 @@
       background-size: cover;
       width: 130px;
       height: 48px;
-      /* Set a height for the navbar-item */
     }
+    /* * {
+      background-color: #FAC898 !important;
+      color: purple !important;
+    }
+    .is-primary, .has-background-primary {
+      background-color: purple !important;
+      color: white;
+    }
+    .title {
+      color: white;
+    } */
   </style>
 </head>
 
@@ -122,8 +137,6 @@
       try {
         const TOTAL_EMPLOYEE_COUNT = 10;
         const data = <?php echo json_encode($analytics_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
-        const avg_data = <?php echo json_encode($check_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE); ?>;
-        console.log('JSON Data:', avg_data);
         date = Object.keys(data);
         emp_count = Object.values(data);
         emp_count.forEach(count => abs_count.push(TOTAL_EMPLOYEE_COUNT - count));

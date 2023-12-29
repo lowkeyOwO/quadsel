@@ -11,7 +11,7 @@
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_FILES["holiday_data"])) {
-            $file_name = basename($_FILES["holiday_data"]["name"]);
+            $file_name = "holiday.xlsx";
             $file_tmp = $_FILES["holiday_data"]["tmp_name"];
             $file_size = $_FILES["holiday_data"]["size"];
             $file_type = $_FILES["holiday_data"]["type"];

@@ -13,7 +13,7 @@ function approve_employee()
     $stmt->store_result();
     $stmt->bind_result($type, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
     include_once ("./generateempid.php");
-    $emp_id = generateID($type); 
+    $emp_id = generateID(); 
     while ($stmt->fetch()) {
         $insertQuery = "INSERT INTO `employee_details` (emp_id, emp_name, date_of_birth, address, email_id, aadhar_no, pan_no, password, profile_photo_link, phone_number, date_of_joining) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

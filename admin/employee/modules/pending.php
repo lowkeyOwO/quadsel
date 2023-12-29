@@ -8,7 +8,7 @@ function pending_approvals()
     $stmt = $conn->prepare($query);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($type, $emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
+    $stmt->bind_result($emp_name, $date_of_birth, $address, $email_id, $aadhar_no, $pan_no, $password, $profile_photo_link, $phone_no);
     $numRows = $stmt->num_rows;
     if ($numRows == 0) {
         echo "<div class='container has-text-centered pt-6'>

@@ -19,17 +19,6 @@
       width: 130px;
       height: 48px;
     }
-    /* * {
-      background-color: #FAC898 !important;
-      color: purple !important;
-    }
-    .is-primary, .has-background-primary {
-      background-color: purple !important;
-      color: white;
-    }
-    .title {
-      color: white;
-    } */
   </style>
 </head>
 
@@ -99,7 +88,7 @@
     </div>
     <div class="container is-flex is-centered is-justify-content-center has-text-centered  mt-6">
 
-      <form action="./holidays/index.php"method="post" class="container has-text-centered"
+      <form action="./holidays/index.php" method="post" class="container has-text-centered"
         enctype="multipart/form-data">
         <input type="file" class="input is-info" accept=".xlsx,.xls" name="holiday_data" />
         <button type="submit" class="button is-primary mt-6" name="holiday_submit">Submit</button>
